@@ -1,0 +1,22 @@
+{
+  "name": "js-table",
+  "version": "1.0.0",
+  "description": "table with javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel index.html --open",
+    "build": "parcel build index.html"
+  },
+  "author": "Vladimir Dmitriev <v.a.dmitriev123@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.9.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-prettier": "^4.0.0",
+    "parcel-bundler": "^1.12.5",
+    "prettier": "^2.5.1"
+  }
+}
