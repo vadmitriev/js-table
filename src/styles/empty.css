@@ -1,0 +1,22 @@
+.empty > {
+  display: flex;
+  justify-content: space-around;
+  align-items: cent/er;
+}
+
+.empty.hide {
+  display: none;
+}
+
+.empty__header {
+  font-size: 4em;
+  font-weight: bold;
+  margin-top: 10%;
+}
+
+.emtpy__load-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10%;
+}
