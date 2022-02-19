@@ -1,9 +1,15 @@
 const URL = 'https://swapi.dev/api/planets/';
 
-const fetchData = async (page = 1) => {
+export const fetchData = async (page = 1, itemsPerPage = 10) => {
   const url = `${URL}?page=${page}`;
   const res = await fetch(url);
-  return res.json();
+  const data = await res.json();
+  
+  return {
+    data: data.results,
+    totalItems: data.count,
+    itemsPerPage: itemsPerPage
+  };
 };
 
 export const columns = [
@@ -28,5 +34,3 @@ export const columns = [
     key: 'surface_water'
   }
 ];
-
-export default fetchData;

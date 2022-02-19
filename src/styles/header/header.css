@@ -1,0 +1,13 @@
+.header-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 18px;
+  border-bottom: 1px solid black;
+}
+
+.header {
+  font-size: 3em;
+  font-weight: bold;
+}

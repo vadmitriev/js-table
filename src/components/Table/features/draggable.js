@@ -1,7 +1,4 @@
-const createDraggable = (table) => {
-  'use strict';
-
-  //   const table = document.getElementById('table');
+const makeDraggable = (table) => {
   const tbody = table.querySelector('tbody');
 
   let currRow = null,
@@ -143,4 +140,4 @@ const createDraggable = (table) => {
   init();
 };
 
-export default createDraggable;
+export default makeDraggable;

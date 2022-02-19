@@ -1,0 +1,25 @@
+.pagination-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px;
+}
+
+#page,
+#first,
+#last {
+  font-weight: bold;
+  font-size: 12px;
+  max-width: 20px;
+  /* height: 20px; */
+  margin: 5px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}

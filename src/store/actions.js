@@ -6,7 +6,8 @@ export const types = {
   CLEAR_TABLE: 'CLEAR_TABLE',
   DELETE_ROW: 'DELETE_ROW',
   CHANGE_PAGE: 'CHANGE_PAGE',
-  TOGGLE_LOADING: 'TOGGLE_LOADING'
+  CHANGE_LOADING: 'CHANGE_LOADING',
+  CHANGE_EMPTY: 'CHANGE_EMPTY'
 };
 
 export const actions = {
@@ -22,10 +23,10 @@ export const actions = {
     };
   },
 
-  loadDataSuccess: (data) => {
+  loadDataSuccess: ({ data, totalItems, itemsPerPage }) => {
     return {
       type: types.LOAD_DATA_SUCCESS,
-      payload: data
+      payload: { data, totalItems, itemsPerPage }
     };
   },
 
@@ -56,9 +57,17 @@ export const actions = {
     };
   },
 
-  toggleLoading: () => {
+  changeLoading: (data) => {
     return {
-      type: types.TOGGLE_LOADING
+      type: types.CHANGE_LOADING,
+      payload: data
+    };
+  },
+
+  changeEmpty: (data) => {
+    return {
+      type: types.CHANGE_EMPTY,
+      payload: data
     };
   }
 };

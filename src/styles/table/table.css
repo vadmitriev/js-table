@@ -1,3 +1,17 @@
+@import './header.css';
+@import './pagination.css';
+
+.table-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.table-wrapper.hide {
+  display: none;
+}
+
 table {
   background-color: #fff;
 
@@ -8,6 +22,10 @@ table {
   min-width: 60vw;
 
   text-justify: center;
+}
+
+table.hide {
+  display: none;
 }
 
 table th {
@@ -24,9 +42,9 @@ thead th {
 }
 
 .draggable-table {
-  position: absolute;
-  top: 25%;
-  left: 20%;
+  /* position: absolute; */
+  /* top: 25%; */
+  /* left: 20%; */
   width: 60%;
   height: 50%;
   border-collapse: collapse;
@@ -86,5 +104,5 @@ thead th {
   background: #e2dfd3;
 }
 .draggable-table tbody tr.is-dragging td {
-  color: #ffe683;
+  color: #b1ac9b;
 }

@@ -1,9 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans|Roboto:400,700&display=swap');
 
-@import './table.css';
-@import './spinner.css';
-@import './button.css';
-@import './empty.css';
+@import './header/header.css';
+@import './table/table.css';
+@import './spinner/spinner.css';
+@import './button/button.css';
+@import './empty/empty.css';
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
@@ -17,7 +18,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 15vh;
+  margin: 15px;
 }
 
 .up-down {
@@ -40,7 +41,7 @@ body {
   background-color: #e6e7ee;
 }
 
-p {
+/* p {
   font-size: 0.75em;
   font-weight: bold;
   position: absolute;
@@ -51,4 +52,4 @@ p {
   text-align: center;
   color: white;
   user-select: none;
-}
+} */

@@ -6,7 +6,10 @@ export const initialState = {
   data: [],
   page: 1,
   columnsWidth: null,
-  rowsHeight: null
+  rowsHeight: null,
+  showEmpty: false,
+  totalItems: null,
+  itemsPerPage: null
 };
 
 export function reducer(state = initialState, action) {
@@ -20,7 +23,9 @@ export function reducer(state = initialState, action) {
       return {
         ...state,
         isLoading: false,
-        data: action.payload
+        data: action.payload.data,
+        itemsPerPage: action.payload.itemsPerPage,
+        totalItems: action.payload.totalItems
       };
     case types.LOAD_DATA_ERROR:
       return {
@@ -31,7 +36,8 @@ export function reducer(state = initialState, action) {
     case types.CLEAR_TABLE:
       return {
         ...state,
-        data: []
+        data: initialState.data,
+        page: initialState.page
       };
     case types.DELETE_ROW:
       const newData = state.data.filter((row) => row.id !== action.payload.id);
@@ -44,10 +50,15 @@ export function reducer(state = initialState, action) {
         ...state,
         page: action.payload
       };
-    case types.TOGGLE_LOADING:
+    case types.CHANGE_LOADING:
       return {
         ...state,
-        isLoading: !state.isLoading
+        isLoading: action.payload
+      };
+    case types.CHANGE_EMPTY:
+      return {
+        ...state,
+        showEmpty: action.payload
       };
     default:
       return state;

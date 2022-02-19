@@ -1,4 +1,4 @@
-const sortTable = (event, table) => {
+export const sortTable = (event, table) => {
   if (!event.target.className.includes('arrow')) {
     return;
   }
@@ -42,5 +42,3 @@ const sortTable = (event, table) => {
     arrow[0].classList.add('up');
   }
 };
-
-export default sortTable;
