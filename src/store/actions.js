@@ -7,7 +7,8 @@ export const types = {
   DELETE_ROW: 'DELETE_ROW',
   CHANGE_PAGE: 'CHANGE_PAGE',
   CHANGE_LOADING: 'CHANGE_LOADING',
-  CHANGE_EMPTY: 'CHANGE_EMPTY'
+  CHANGE_EMPTY: 'CHANGE_EMPTY',
+  SORT_DATA: 'SORT_DATA'
 };
 
 export const actions = {
@@ -68,6 +69,13 @@ export const actions = {
     return {
       type: types.CHANGE_EMPTY,
       payload: data
+    };
+  },
+
+  sortData: (key, direction) => {
+    return {
+      type: types.SORT_DATA,
+      payload: { key, direction }
     };
   }
 };

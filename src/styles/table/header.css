@@ -5,3 +5,7 @@
 .table-header__actions button {
   margin-left: 10px;
 }
+
+#delete {
+  cursor: default;
+}

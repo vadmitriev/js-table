@@ -7,6 +7,7 @@ import { TableHeader } from './tableHeader';
 import { Pagination } from './pagination';
 
 import { get } from 'utils/utils';
+import { actions } from 'store';
 
 const tableWrapper = document.querySelector('.table-wrapper');
 const tableHeader = tableWrapper.querySelector('.table-header');
@@ -14,20 +15,16 @@ const pagination = tableWrapper.querySelector('.pagination-wrapper');
 const table = tableWrapper.querySelector('table');
 
 export default class Table {
-  constructor({ store, onUpdate, onSave, onClear, onChangePage }) {
+  constructor({ store, onUpdate, onSave, onClear }) {
     this.store = store;
 
     this.onUpdate = onUpdate;
     this.onClear = onClear;
-    this.onChangePage = onChangePage;
+    this.onSave = onSave;
 
     this.data = store.getState().data;
     this.render();
     this.table = table;
-  }
-
-  filterData() {
-    const data = this.store.getState().data;
   }
 
   hide() {
@@ -45,13 +42,39 @@ export default class Table {
   }
 
   makeHead() {
+    const makeArrow = (item) => {
+      let arrow = '⬍';
+      let className = 'arrow';
+
+      const state = this.store.getState();
+
+      const key = this.store.getState().sortBy.key;
+      const direction = this.store.getState().sortBy.direction;
+      // <span class="arrow up-down">⬍</span>
+      if (item.key === key && direction) {
+        if (direction === 'up') {
+          className += ' up';
+          arrow = '▲';
+        } else {
+          className += ' down';
+          arrow = '▼';
+        }
+      } else {
+        className += 'up-down';
+      }
+
+      return `
+        <span class="${className}">${arrow}</span>
+      `;
+    };
+
     const createHeadRow = (item) => {
       return `
 	 	    <th id=${item.key}>
           <span>
             ${item.name}
           </span>
-          <span class="arrow up-down">⬍</span>
+          ${makeArrow(item)}
         </th> 
 	    `;
     };
@@ -101,7 +124,7 @@ export default class Table {
           })
           .join(' ') + deleteBtnHtml;
 
-      return `<tr>${row}</tr>`;
+      return `<tr id="${item.id}">${row}</tr>`;
     };
 
     const currentPage = this.store.getState().page;
@@ -158,6 +181,29 @@ export default class Table {
 
   makeRowsRemovable() {}
 
+  handleSort(el) {
+    let th;
+    let arrow;
+
+    const elType = el.tagName.toLowerCase();
+    if (elType === 'span') {
+      th = el.closest('th');
+      arrow = el;
+    }
+    if (elType === 'th') {
+      th = el;
+      arrow = el.querySelector('.arrow');
+    }
+
+    const id = th.id;
+
+    const up = arrow.classList.contains('up-down') || arrow.classList.contains('up');
+    const direction = up ? 'down' : 'up';
+
+    this.store.dispatch(actions.sortData(id, direction));
+    this.onSave();
+  }
+
   handleDragEnd(e) {
     console.log('dragEnd', e);
   }
@@ -182,7 +228,7 @@ export default class Table {
       return;
     }
 
-    this.onChangePage(1);
+    this.handleChangePage(1);
   }
 
   handleLastPage() {
@@ -193,7 +239,7 @@ export default class Table {
       return;
     }
 
-    this.onChangePage(pageCount);
+    this.handleChangePage(pageCount);
   }
 
   handleChangePage(btn) {
@@ -203,10 +249,28 @@ export default class Table {
       return;
     }
 
-    this.onChangePage(page);
+    this.store.dispatch(actions.changePage(page));
+  }
+
+  handleDelete(btn) {
+    const row = btn.parentElement.parentElement;
+    row.remove();
+    const id = Number(row.id);
+    this.store.dispatch(actions.deleteRow(id));
+    this.onSave();
   }
 
   bindEvents() {
+    const thArray = tableWrapper.querySelectorAll('th');
+    thArray.forEach((th) => {
+      th.addEventListener('click', (e) => this.handleSort(e.target));
+    });
+
+    const pageBtns = tableWrapper.querySelectorAll('#delete');
+    pageBtns.forEach((btn) => {
+      btn.addEventListener('click', (e) => this.handleDelete(e.target));
+    });
+
     this.makeDraggable();
     this.makeSortable();
     this.makeRowsResizable();

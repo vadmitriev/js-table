@@ -28,7 +28,7 @@ const loadData = async () => {
   try {
     const data = await fetchData();
     store.dispatch(actions.loadDataSuccess(data));
-    // saveData();
+    saveData();
   } catch (e) {
     store.dispatch(actions.loadDataError(e));
     store.dispatch(actions.changeEmpty(true));
@@ -64,7 +64,6 @@ const renderPage = () => {
     onUpdate: updateData,
     onClear: clearTable,
     onSave: saveData,
-    onChangePage: changePage
   });
 
   new EmptyBlock(store, loadData);

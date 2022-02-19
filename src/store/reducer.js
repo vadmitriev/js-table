@@ -1,4 +1,4 @@
-import { types, actions } from './actions';
+import { types } from './actions';
 
 export const initialState = {
   isLoading: false,
@@ -9,10 +9,16 @@ export const initialState = {
   rowsHeight: null,
   showEmpty: false,
   totalItems: null,
-  itemsPerPage: 10
+  itemsPerPage: 10,
+  sortBy: {
+    key: null,
+    direction: null
+  }
 };
 
 export function reducer(state = initialState, action) {
+  let newData;
+
   switch (action.type) {
     case types.LOAD_DATA:
       return {
@@ -36,13 +42,15 @@ export function reducer(state = initialState, action) {
       return {
         ...state,
         data: initialState.data,
-        page: initialState.page
+        page: initialState.page,
+        sortBy: initialState.sortBy
       };
     case types.DELETE_ROW:
-      const newData = state.data.filter((row) => row.id !== action.payload.id);
+      newData = state.data.filter((row) => row.id !== action.payload);
       return {
         ...state,
-        data: newData
+        data: newData,
+        totalItems: newData.length
       };
     case types.CHANGE_PAGE:
       return {
@@ -59,6 +67,35 @@ export function reducer(state = initialState, action) {
         ...state,
         showEmpty: action.payload
       };
+    case types.SORT_DATA:
+      const key = action.payload.key;
+      const direction = action.payload.direction;
+
+      if (direction) {
+        newData = state.data.sort((a, b) => {
+          if (a[key] < b[key]) {
+            return direction === 'up' ? -1 : 1;
+          }
+
+          if (a[key] > b[key]) {
+            return direction === 'down' ? -1 : 1;
+          }
+
+          return 0;
+        });
+      } else {
+        newData = initialState.data;
+      }
+
+      return {
+        ...state,
+        sortBy: {
+          key,
+          direction
+        },
+        data: newData
+      };
+
     default:
       return state;
   }
