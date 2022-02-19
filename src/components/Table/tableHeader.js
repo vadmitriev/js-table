@@ -1,4 +1,4 @@
-export const tableHeader = () => {
+export const TableHeader = () => {
   return `
 	<div class="table-header__actions">
 		<button type="button" id="clear" class="btn danger">

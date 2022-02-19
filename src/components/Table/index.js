@@ -3,10 +3,15 @@ import sortTable from './features/sortable';
 
 import { columns } from 'api/fetchAPI';
 
-import { tableHeader } from './tableHeader';
-import { pagination } from './pagination';
+import { TableHeader } from './tableHeader';
+import { Pagination } from './pagination';
+
+import { get } from 'utils/utils';
 
 const tableWrapper = document.querySelector('.table-wrapper');
+const tableHeader = tableWrapper.querySelector('.table-header');
+const pagination = tableWrapper.querySelector('.pagination-wrapper');
+const table = tableWrapper.querySelector('table');
 
 export default class Table {
   constructor({ store, onUpdate, onSave, onClear, onChangePage }) {
@@ -18,7 +23,11 @@ export default class Table {
 
     this.data = store.getState().data;
     this.render();
-    this.table = null;
+    this.table = table;
+  }
+
+  filterData() {
+    const data = this.store.getState().data;
   }
 
   hide() {
@@ -27,6 +36,12 @@ export default class Table {
 
   show() {
     tableWrapper.classList.remove('hide');
+  }
+
+  calcPageCount() {
+    const totalItems = this.store.getState().totalItems;
+    const itemsPerPage = this.store.getState().itemsPerPage;
+    return Math.ceil(totalItems / itemsPerPage);
   }
 
   makeHead() {
@@ -41,21 +56,98 @@ export default class Table {
 	    `;
     };
 
-    return columns.map(createHeadRow).join(' ');
+    const createDeleteAction = () => {
+      return `
+        <th id="delete">
+          ❌ Delete
+        </th>
+      `;
+    };
+
+    const html = columns.map(createHeadRow).join(' ') + createDeleteAction();
+
+    return html;
   }
 
   makeBody() {
     const createBodyRow = (item) => {
-      const row = columns
-        .map((col) => {
-          return `<td id="${col.key}">${item[col.key]}</td>`;
-        })
-        .join(' ');
+      const deleteBtnHtml = `
+        <td id="delete">
+          <button class="btn-small danger">
+            X
+          </button>
+        </td>
+      `;
+
+      const getValue = (item, col) => {
+        if (col.link_key) {
+          return `
+            <a href="${get(item, col.link_key, '')}" target="_blank">
+              ${get(item, col.key, '-')}
+            </a>
+          `;
+        }
+        return get(item, col.key, '-');
+      };
+
+      const row =
+        columns
+          .map((col) => {
+            return `
+              <td id="${col.key}">
+                ${getValue(item, col)}
+              </td>
+            `;
+          })
+          .join(' ') + deleteBtnHtml;
 
       return `<tr>${row}</tr>`;
     };
 
-    return this.data.map(createBodyRow).join(' ');
+    const currentPage = this.store.getState().page;
+    const itemsPerPage = this.store.getState().itemsPerPage;
+
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = currentPage * itemsPerPage;
+    const slice = this.data.slice(start, end);
+    const html = slice.map(createBodyRow).join(' ');
+
+    return html;
+  }
+
+  makeHeader() {
+    tableHeader.innerHTML = TableHeader();
+
+    const clearBtn = tableHeader.querySelector('#clear');
+    const loadBtn = tableHeader.querySelector('#load');
+
+    clearBtn.addEventListener('click', this.onClear);
+    loadBtn.addEventListener('click', this.onUpdate);
+  }
+
+  makePagination() {
+    const currentPage = this.store.getState().page;
+    const pageCount = this.calcPageCount();
+
+    const prevHtml = pagination.innerHTML;
+    const newHtml = Pagination(currentPage, pageCount);
+
+    if (prevHtml.toLowerCase() === newHtml.toLowerCase()) {
+      return;
+    }
+
+    pagination.innerHTML = newHtml;
+
+    const firstBtn = pagination.querySelector('#first');
+    const lastBtn = pagination.querySelector('#last');
+
+    firstBtn.addEventListener('click', (e) => this.handleFirstPage(e.target));
+    lastBtn.addEventListener('click', (e) => this.handleLastPage(e.target));
+
+    const pageBtns = tableWrapper.querySelectorAll('#page');
+    pageBtns.forEach((btn) => {
+      btn.addEventListener('click', (e) => this.handleChangePage(e.target));
+    });
   }
 
   makeSortable() {}
@@ -94,16 +186,14 @@ export default class Table {
   }
 
   handleLastPage() {
-    const totalItems = this.store.getState().totalItems;
-    const itemsPerPage = this.store.getState().itemsPerPage;
-    const pageCount = totalItems / itemsPerPage;
+    const pageCount = this.calcPageCount();
     const currentPage = this.store.getState().page;
 
-    if (currentPage === pageCount - 1) {
+    if (currentPage === pageCount) {
       return;
     }
 
-    this.onChangePage(pageCount - 1);
+    this.onChangePage(pageCount);
   }
 
   handleChangePage(btn) {
@@ -112,7 +202,7 @@ export default class Table {
     if (Number(page) === currentPage) {
       return;
     }
-    
+
     this.onChangePage(page);
   }
 
@@ -122,52 +212,27 @@ export default class Table {
     this.makeRowsResizable();
     this.makeColumnsResizable();
     this.makeRowsRemovable();
-
-    const clearBtn = tableWrapper.querySelector('#clear');
-    const loadBtn = tableWrapper.querySelector('#load');
-
-    clearBtn.addEventListener('click', this.onClear);
-    loadBtn.addEventListener('click', this.onUpdate);
-
-    const firstBtn = tableWrapper.querySelector('#first');
-    const lastBtn = tableWrapper.querySelector('#last');
-
-    firstBtn.addEventListener('click', (e) => this.handleFirstPage(e.target));
-    lastBtn.addEventListener('click', (e) => this.handleLastPage(e.target));
-
-    const pageBtns = tableWrapper.querySelectorAll('#page');
-    pageBtns.forEach((btn) => {
-      btn.addEventListener('click', (e) => this.handleChangePage(e.target));
-    });
   }
 
   renderTable() {
-    const currentPage = this.store.getState().page;
-    const totalItems = this.store.getState().totalItems;
-    const itemsPerPage = this.store.getState().itemsPerPage;
-    const pageCount = totalItems / itemsPerPage;
-
     const html = `
-	  	<div class="table-header">${tableHeader()}</div>
-      <table class="draggable-table">
-		  	<thead>
-          ${this.makeHead()}
-        </thead>
-        <tbody>
-          ${this.makeBody()}
-        </tbody>
-		  </table>
-		  <div class="pagination-wrapper">${pagination(currentPage, pageCount)}</div>	
+      <thead>
+        ${this.makeHead()}
+      </thead>
+      <tbody>
+        ${this.makeBody()}
+      </tbody>		  
 	  `;
 
-    tableWrapper.innerHTML = html;
-
-    this.table = tableWrapper.querySelector('table');
+    table.classList.add('draggable-table');
+    table.innerHTML = html;
 
     if (!this.table) {
       this.show();
       return;
     }
+
+    this.makePagination();
 
     this.bindEvents();
 
@@ -175,6 +240,9 @@ export default class Table {
   }
 
   render() {
+    this.makeHeader();
+    this.makePagination();
+
     this.store.substribe(() => {
       this.data = this.store.getState().data;
 

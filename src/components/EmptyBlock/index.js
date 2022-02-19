@@ -1,5 +1,3 @@
-import { actions } from 'store/actions';
-
 const emptyBlock = document.querySelector('.empty');
 
 export default class EmptyBlock {

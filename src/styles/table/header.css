@@ -1,10 +1,5 @@
 .table-header {
-  display: flex;
-  /* justify-content: center; */
-  /* align-items: center; */
-  margin-bottom: 15px;
-  /* justify-content: space-around;
-  align-items: space-around; */
+  margin-bottom: 20px;
 }
 
 .table-header__actions button {

@@ -1,36 +1,38 @@
-const URL = 'https://swapi.dev/api/planets/';
+// const URL = 'https://swapi.dev/api/planets/';
+const URL = 'https://api.github.com/search/repositories?q=react&per_page=100';
 
-export const fetchData = async (page = 1, itemsPerPage = 10) => {
-  const url = `${URL}?page=${page}`;
-  const res = await fetch(url);
+export const fetchData = async () => {
+  const itemsPerPage = 10;
+
+  const res = await fetch(URL);
   const data = await res.json();
-  
+
   return {
-    data: data.results,
-    totalItems: data.count,
-    itemsPerPage: itemsPerPage
+    data: data.items,
+    totalItems: data.items.length
   };
 };
 
 export const columns = [
   {
     name: 'Name',
-    key: 'name'
+    key: 'name',
+    link_key: 'html_url',
   },
   {
-    name: 'Population',
-    key: 'population'
+    name: 'User',
+    key: 'owner.login'
   },
   {
-    name: 'Diameter',
-    key: 'diameter'
+    name: '🍴 Forks',
+    key: 'forks'
   },
   {
-    name: 'Rotation Period',
-    key: 'rotation_period'
+    name: '🌟 Stars',
+    key: 'stargazers_count'
   },
   {
-    name: 'Surface Water',
-    key: 'surface_water'
+    name: '🔕 Issues',
+    key: 'open_issues'
   }
 ];

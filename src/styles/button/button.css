@@ -53,7 +53,11 @@ button:active {
 }
 
 button.btn-small {
-  font-size: 14px;
+  font-size: 12px;
+  /* height: 25px; */
+  /* width: 25px; */
+  /* max-height: 15px; */
+  padding: 1em 1.5em;
 }
 
 button.btn-medium {

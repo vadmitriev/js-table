@@ -26,8 +26,7 @@ const loadData = async () => {
   store.dispatch(actions.loadData());
 
   try {
-    const page = store.getState().page;
-    const data = await fetchData(page);
+    const data = await fetchData();
     store.dispatch(actions.loadDataSuccess(data));
     // saveData();
   } catch (e) {
@@ -44,7 +43,7 @@ const updateData = async () => {
 
 const changePage = async (page) => {
   store.dispatch(actions.changePage(page));
-  loadData();
+  // loadData();
 };
 
 const clearTable = () => {
@@ -58,7 +57,7 @@ const renderPage = () => {
     loadData();
   }
 
-  new Header();
+  new Header('Top React Projects');
 
   new Table({
     store,

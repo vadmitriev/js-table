@@ -9,7 +9,7 @@ export const initialState = {
   rowsHeight: null,
   showEmpty: false,
   totalItems: null,
-  itemsPerPage: null
+  itemsPerPage: 10
 };
 
 export function reducer(state = initialState, action) {
@@ -24,7 +24,6 @@ export function reducer(state = initialState, action) {
         ...state,
         isLoading: false,
         data: action.payload.data,
-        itemsPerPage: action.payload.itemsPerPage,
         totalItems: action.payload.totalItems
       };
     case types.LOAD_DATA_ERROR:

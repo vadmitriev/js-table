@@ -1,4 +1,8 @@
 .header-wrapper {
+  /* position: absolute; */
+  /* top: 0; */
+  /* left: 50%; */
+
   display: flex;
   justify-content: center;
   align-items: center;
