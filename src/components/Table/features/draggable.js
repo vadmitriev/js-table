@@ -45,7 +45,11 @@ const makeDraggable = (table) => {
       if (!mouseDrag) return;
 
       currRow.classList.remove('is-dragging');
-      table.removeChild(dragElem);
+      try {
+        table.removeChild(dragElem);
+      } catch (e) {
+        console.log(e);
+      }
 
       dragElem = null;
       mouseDrag = false;
@@ -56,8 +60,11 @@ const makeDraggable = (table) => {
     let currIndex = Array.from(tbody.children).indexOf(currRow),
       row1 = currIndex > index ? currRow : row,
       row2 = currIndex > index ? row : currRow;
-
-    tbody.insertBefore(row1, row2);
+    try {
+      tbody.insertBefore(row1, row2);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   function moveRow(x, y) {

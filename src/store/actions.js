@@ -8,7 +8,8 @@ export const types = {
   CHANGE_PAGE: 'CHANGE_PAGE',
   CHANGE_LOADING: 'CHANGE_LOADING',
   CHANGE_EMPTY: 'CHANGE_EMPTY',
-  SORT_DATA: 'SORT_DATA'
+  SORT_DATA: 'SORT_DATA',
+  MOVE_ROW: 'MOVE_ROW',
 };
 
 export const actions = {
@@ -77,6 +78,13 @@ export const actions = {
       type: types.SORT_DATA,
       payload: { key, direction }
     };
+  },
+
+  moveRow: (startIndex, endIndex) => {
+    return {
+      type: types.MOVE_ROW,
+      payload: { startIndex, endIndex },
+    }
   }
 };
 

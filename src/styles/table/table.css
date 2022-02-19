@@ -112,3 +112,8 @@ thead th {
 .draggable-table tbody tr.is-dragging td {
   color: #b1ac9b;
 }
+
+tr:hover {
+  color: rgba(4, 42, 51, 0.4);
+  box-shadow: 0px 15px 20px rgba(31, 18, 148, 0.4);
+}

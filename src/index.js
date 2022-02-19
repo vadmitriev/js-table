@@ -41,11 +41,6 @@ const updateData = async () => {
   loadData();
 };
 
-const changePage = async (page) => {
-  store.dispatch(actions.changePage(page));
-  // loadData();
-};
-
 const clearTable = () => {
   store.dispatch(actions.changeEmpty(true));
   store.dispatch(actions.clearTable());

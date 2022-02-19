@@ -1,4 +1,5 @@
 import { types } from './actions';
+import { get, move } from 'utils';
 
 export const initialState = {
   isLoading: false,
@@ -73,11 +74,11 @@ export function reducer(state = initialState, action) {
 
       if (direction) {
         newData = state.data.sort((a, b) => {
-          if (a[key] < b[key]) {
+          if (get(a, key) < get(b, key)) {
             return direction === 'up' ? -1 : 1;
           }
 
-          if (a[key] > b[key]) {
+          if (get(a, key) > get(b, key)) {
             return direction === 'down' ? -1 : 1;
           }
 
@@ -95,7 +96,12 @@ export function reducer(state = initialState, action) {
         },
         data: newData
       };
-
+    case types.MOVE_ROW:
+      newData = move(state.data, action.payload.startIndex, action.payload.endIndex);
+      return {
+        ...state,
+        data: newData
+      };
     default:
       return state;
   }

@@ -1,12 +1,11 @@
 import makeDraggable from './features/draggable';
-import sortTable from './features/sortable';
 
 import { columns } from 'api/fetchAPI';
 
 import { TableHeader } from './tableHeader';
 import { Pagination } from './pagination';
 
-import { get } from 'utils/utils';
+import { get } from 'utils';
 import { actions } from 'store';
 
 const tableWrapper = document.querySelector('.table-wrapper');
@@ -23,8 +22,12 @@ export default class Table {
     this.onSave = onSave;
 
     this.data = store.getState().data;
-    this.render();
+    this.tableData = this.data;
+
+    this.index = null;
+
     this.table = table;
+    this.render();
   }
 
   hide() {
@@ -46,11 +49,9 @@ export default class Table {
       let arrow = '⬍';
       let className = 'arrow';
 
-      const state = this.store.getState();
-
       const key = this.store.getState().sortBy.key;
       const direction = this.store.getState().sortBy.direction;
-      // <span class="arrow up-down">⬍</span>
+
       if (item.key === key && direction) {
         if (direction === 'up') {
           className += ' up';
@@ -133,6 +134,8 @@ export default class Table {
     const start = (currentPage - 1) * itemsPerPage;
     const end = currentPage * itemsPerPage;
     const slice = this.data.slice(start, end);
+    this.tableData = slice;
+
     const html = slice.map(createBodyRow).join(' ');
 
     return html;
@@ -173,13 +176,9 @@ export default class Table {
     });
   }
 
-  makeSortable() {}
-
   makeColumnsResizable() {}
 
   makeRowsResizable() {}
-
-  makeRowsRemovable() {}
 
   handleSort(el) {
     let th;
@@ -212,12 +211,43 @@ export default class Table {
     console.log('drop', e);
   }
 
-  handleMouseUp(e) {
-    console.log('mouseUp', e.target.parentNode);
+  handleMouseUp(el) {
+    if (el.tagName.toLowerCase() !== 'tr') {
+      el = el.closest('tr');
+    }
+
+    const tbody = table.querySelector('tbody');
+    let newIndex = Array.from(tbody.children).indexOf(el);
+
+    let oldIndex = this.index;
+
+    if (newIndex === oldIndex) {
+      return;
+    }
+    const itemsPerPage = this.store.getState().itemsPerPage;
+    const page = this.store.getState().page;
+
+    oldIndex += itemsPerPage * (page - 1);
+    newIndex += itemsPerPage * (page - 1);
+
+    this.store.dispatch(actions.moveRow(oldIndex, newIndex));
+    this.onSave();
+  }
+
+  handleMouseDown(el) {
+    if (el.tagName.toLowerCase() !== 'tr') {
+      el = el.closest('tr');
+    }
+
+    const tbody = table.querySelector('tbody');
+    let oldIndex = Array.from(tbody.children).indexOf(el);
+
+    this.index = oldIndex - 1;
   }
 
   makeDraggable() {
-    this.table.addEventListener('mouseup', this.handleMouseUp);
+    this.table.addEventListener('mouseup', (e) => this.handleMouseUp(e.target.parentNode));
+    this.table.addEventListener('mousedown', (e) => this.handleMouseDown(e.target.parentNode));
 
     makeDraggable(this.table);
   }
@@ -228,7 +258,7 @@ export default class Table {
       return;
     }
 
-    this.handleChangePage(1);
+    this.onChangePage(1);
   }
 
   handleLastPage() {
@@ -239,7 +269,7 @@ export default class Table {
       return;
     }
 
-    this.handleChangePage(pageCount);
+    this.onChangePage(pageCount);
   }
 
   handleChangePage(btn) {
@@ -249,7 +279,12 @@ export default class Table {
       return;
     }
 
+    this.onChangePage(page);
+  }
+
+  onChangePage(page) {
     this.store.dispatch(actions.changePage(page));
+    this.onSave();
   }
 
   handleDelete(btn) {
@@ -272,10 +307,8 @@ export default class Table {
     });
 
     this.makeDraggable();
-    this.makeSortable();
     this.makeRowsResizable();
     this.makeColumnsResizable();
-    this.makeRowsRemovable();
   }
 
   renderTable() {
