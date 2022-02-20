@@ -52,7 +52,7 @@ const renderPage = () => {
     loadData();
   }
 
-  new Header('Top React Projects');
+  new Header('Top 100 React Projects');
 
   new Table({
     store,

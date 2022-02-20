@@ -24,7 +24,10 @@ export default class Table {
     this.data = store.getState().data;
     this.tableData = this.data;
 
-    this.index = null;
+    this.index = {
+      old: null,
+      new: null
+    };
 
     this.table = table;
     this.render();
@@ -211,45 +214,46 @@ export default class Table {
     console.log('drop', e);
   }
 
-  handleMouseUp(el) {
-    if (el.tagName.toLowerCase() !== 'tr') {
-      el = el.closest('tr');
-    }
+  // handleMouseUp(el) {
+  //   let oldIndex = this.index.old;
+  //   let newIndex = this.index.new - 1;
 
-    const tbody = table.querySelector('tbody');
-    let newIndex = Array.from(tbody.children).indexOf(el);
+  //   if (newIndex === oldIndex || newIndex === -1 || oldIndex === -1) {
+  //     return;
+  //   }
+  //   const itemsPerPage = this.store.getState().itemsPerPage;
+  //   let page = this.store.getState().page - 1;
 
-    let oldIndex = this.index;
+  //   oldIndex += itemsPerPage * page;
+  //   newIndex += itemsPerPage * page;
 
-    if (newIndex === oldIndex) {
+  //   this.store.dispatch(actions.moveRow(oldIndex, newIndex));
+  //   this.onSave();
+  // }
+
+  checkDrag(oldIndex, newIndex) {
+    console.log('checkDrag', oldIndex, newIndex);
+
+    if (newIndex === oldIndex || newIndex === -1 || oldIndex === -1) {
       return;
     }
     const itemsPerPage = this.store.getState().itemsPerPage;
-    const page = this.store.getState().page;
+    let page = this.store.getState().page - 1;
 
-    oldIndex += itemsPerPage * (page - 1);
-    newIndex += itemsPerPage * (page - 1);
+    oldIndex += itemsPerPage * page - 1;
+    newIndex += itemsPerPage * page - 1;
 
     this.store.dispatch(actions.moveRow(oldIndex, newIndex));
     this.onSave();
-  }
-
-  handleMouseDown(el) {
-    if (el.tagName.toLowerCase() !== 'tr') {
-      el = el.closest('tr');
-    }
-
-    const tbody = table.querySelector('tbody');
-    let oldIndex = Array.from(tbody.children).indexOf(el);
-
-    this.index = oldIndex - 1;
+    // const oldIndex = this.tableData.findIndex((item) => Number(item.id) === Number(row.id));
+    // this.index.old = oldIndex;
+    // this.index.new = newIndex;
   }
 
   makeDraggable() {
-    this.table.addEventListener('mouseup', (e) => this.handleMouseUp(e.target.parentNode));
-    this.table.addEventListener('mousedown', (e) => this.handleMouseDown(e.target.parentNode));
+    // this.table.addEventListener('mouseup', (e) => this.handleMouseUp(e.target.parentNode));
 
-    makeDraggable(this.table);
+    makeDraggable(this.table, (row, newIndex) => this.checkDrag(row, newIndex));
   }
 
   handleFirstPage() {
@@ -321,7 +325,7 @@ export default class Table {
       </tbody>		  
 	  `;
 
-    table.classList.add('draggable-table');
+    // table.classList.add('draggable-table');
     table.innerHTML = html;
 
     if (!this.table) {

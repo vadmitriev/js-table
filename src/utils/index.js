@@ -9,9 +9,16 @@ export const get = (object, path, defaultValue) => {
 };
 
 export const move = (array, oldIndex, newIndex) => {
-  if (newIndex >= array.length) {
-    newIndex = array.length - 1;
+  const result = [...array];
+
+  const startIndex = oldIndex < 0 ? result.length : oldIndex;
+
+  if (startIndex >= 0 && startIndex < result.length) {
+    const endIndex = startIndex < 0 ? result.length + newIndex : newIndex;
+
+    const [item] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, item);
   }
-  array.splice(newIndex, 0, array.splice(oldIndex, 1)[0]);
-  return array;
+
+  return result;
 };

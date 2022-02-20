@@ -16,11 +16,11 @@ export const Pagination = (activePage, pageCount) => {
   return `
 		<div class="pagination">
 			<button type="button" class="btn-small" id="first">
-				<
+				<<
 			</button>
 			${generateButtons()}
 			<button type="button" class="btn-small" id="last">
-				>
+				>>
 			</button>
 		</div>
 	`;

@@ -2,6 +2,12 @@
   margin-bottom: 20px;
 }
 
+.table-header__actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .table-header__actions button {
   margin-left: 10px;
 }
