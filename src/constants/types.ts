@@ -32,8 +32,6 @@ export type Api = {
   itemsPerPage?: number;
 };
 
-export interface ItemProps {}
-
 export interface ColumnProps {
   name: string;
   key: string;
