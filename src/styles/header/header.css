@@ -1,17 +1,17 @@
 .header-wrapper {
-  /* position: absolute; */
-  /* top: 0; */
-  /* left: 50%; */
-
   display: flex;
   justify-content: center;
   align-items: center;
 
   padding: 18px;
-  /* border-bottom: 1px solid black; */
 }
 
 .header {
   font-size: 3em;
   font-weight: bold;
+}
+
+.header span {
+  color: #007bff;
+  text-transform: capitalize;
 }

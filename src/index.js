@@ -16,6 +16,8 @@ const lsData = getFromLocalStorage(LS_KEY);
 const prevState = lsData ? lsData : initialState;
 const store = createStore(reducer, prevState);
 
+const header = new Header();
+
 const saveData = async () => {
   const state = store.getState();
   saveToLocalStorage(LS_KEY, state);
@@ -26,7 +28,10 @@ const loadData = async () => {
   store.dispatch(actions.loadData());
 
   try {
-    const data = await fetchData();
+    const title = store.getState().title;
+    header.setTitle(title);
+
+    const data = await fetchData(title);
     store.dispatch(actions.loadDataSuccess(data));
     saveData();
   } catch (e) {
@@ -42,6 +47,9 @@ const updateData = async () => {
 };
 
 const clearTable = () => {
+  store.dispatch(actions.setTitle(''));
+  header.setTitle('');
+
   store.dispatch(actions.changeEmpty(true));
   store.dispatch(actions.clearTable());
 };
@@ -52,13 +60,14 @@ const renderPage = () => {
     loadData();
   }
 
-  new Header('Top 100 React Projects');
+  const title = store.getState().title;
+  header.setTitle(title);
 
   new Table({
     store,
     onUpdate: updateData,
     onClear: clearTable,
-    onSave: saveData,
+    onSave: saveData
   });
 
   new EmptyBlock(store, loadData);

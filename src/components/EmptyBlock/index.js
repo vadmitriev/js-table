@@ -1,3 +1,5 @@
+import { actions } from 'store';
+
 const emptyBlock = document.querySelector('.empty');
 
 export default class EmptyBlock {
@@ -5,6 +7,9 @@ export default class EmptyBlock {
     this.store = store;
     this.onClick = onClick;
     this.error = store.getState().error;
+
+    this.input = null;
+
     this.render();
   }
 
@@ -26,18 +31,52 @@ export default class EmptyBlock {
     `;
   }
 
+  handleLoad() {
+    const title = this.input.value;
+
+    if (title.trim() === '') return;
+    this.store.dispatch(actions.setTitle(title));
+
+    this.input.value = '';
+
+    this.hide();
+    this.onClick();
+  }
+
   addButtonAction() {
     const button = emptyBlock.querySelector('#load');
-    button.addEventListener('click', () => {
-      this.hide();
-      this.onClick();
+    button.addEventListener('click', () => this.handleLoad());
+  }
+
+  addInputAction() {
+    this.input = emptyBlock.querySelector('input');
+    this.input.addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') {
+        this.handleLoad();
+      }
     });
+  }
+
+  inputWrapperHtml() {
+    return `
+      <div class="empty-header__input-wrapper">
+        <input 
+          type="text" 
+          class="empty-input" 
+          placeholder="Поиск"
+        >
+        <span class="focus-border"></span>
+      </div>
+    `;
   }
 
   defaultHtml() {
     const html = `
-      <div class="empty__header">
-        Тут ничего нет...
+      <div class="empty-header">
+        <div class="emtpy-header__text">
+          Тут ничего нет...
+        </div>  
+        ${this.inputWrapperHtml()}
       </div>
       ${this.formLoadContentBlock()}
     `;
@@ -47,8 +86,11 @@ export default class EmptyBlock {
 
   errorHtml() {
     const html = `
-      <div class="empty__header">
-        Произошла ошибка
+      <div class="empty-header">
+        <div class="emtpy-header__text">
+          Произошла ошибка
+        </div>  
+        ${this.inputWrapperHtml()}
       </div>
       ${this.formLoadContentBlock()}
     `;
@@ -58,6 +100,7 @@ export default class EmptyBlock {
 
   showError() {
     emptyBlock.innerHTML = this.errorHtml();
+
     this.addButtonAction();
     this.show();
   }
@@ -65,6 +108,8 @@ export default class EmptyBlock {
   render() {
     const html = this.error ? this.errorHtml() : this.defaultHtml();
     emptyBlock.innerHTML = html;
+
+    this.addInputAction();
 
     this.addButtonAction();
 

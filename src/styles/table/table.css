@@ -1,15 +1,10 @@
 @import './header.css';
 @import './pagination.css';
+@import './dragdrop.css';
+@import './resize.css';
 
 .table-wrapper {
-  /* display: flex; */
-  /* justify-content: center; */
-  /* align-items: center; */
-  /* flex-direction: column; */
-
-  /* position: absolute; */
-  /* top: 12%; */
-  /* left: 20%; */
+  display: block;
 }
 
 .table-wrapper.hide {
@@ -21,8 +16,7 @@ table {
   border: 1px solid #ccc;
   border-collapse: collapse;
 
-  table-layout: fixed;
-  width: 900px;
+  width: 1000px;
 
   text-align: center;
 }
@@ -69,44 +63,6 @@ tbody tr:nth-child(odd) {
   background-color: #ffffff;
 }
 
-.draggable {
-  cursor: move;
-  user-select: none;
-}
-
-.placeholder {
-  background-color: #edf2f7;
-  border: 2px dashed #cbd5e0;
-}
-
-.clone-list {
-  border-top: 1px solid #ccc;
-}
-
-.clone-table {
-  border-collapse: collapse;
-  border: none;
-}
-
-.clone-table th,
-.clone-table td {
-  border: 1px solid #ccc;
-  border-top: none;
-  padding: 0.5rem;
-}
-
-.clone-table td {
-  font-size: 0.95em;
-  font-weight: lighter;
-  text-transform: capitalize;
-  padding: 10px;
-}
-
-.dragging {
-  border-top: 1px solid #ccc;
-  z-index: 999;
-}
-
 table button:hover {
   transform: none;
 }
@@ -115,23 +71,6 @@ thead span {
   user-select: none;
 }
 
-.resizer {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 5px;
-  cursor: col-resize;
-  user-select: none;
-}
-
-.resizer:hover,
-.resizing {
-  border-right: 2px solid blue;
-}
-
-.resizable {
-  border: 1px solid gray;
-  height: 100px;
-  width: 100px;
+tbody tr {
   position: relative;
 }

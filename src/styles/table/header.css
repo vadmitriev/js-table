@@ -8,6 +8,42 @@
   align-items: center;
 }
 
+.table-header__input-wrapper {
+  position: relative;
+  float: left;
+  width: 27.33%;
+}
+
+.table-header__input {
+  width: 100%;
+  border: 0;
+  padding: 7px;
+  border-bottom: 1px solid #ccc;
+}
+
+.table-header__input ~ .focus-border {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  transition: 0.4s;
+}
+
+.table-header__input:focus ~ .focus-border {
+  width: 97%;
+  transition: 0.4s;
+  border: 2px solid #007bff;
+}
+
+.focus-border {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: #007bff;
+}
+
 .table-header__actions button {
   margin-left: 10px;
 }

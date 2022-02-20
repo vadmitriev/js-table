@@ -1,4 +1,4 @@
-import { makeDraggable, makeColumnsResizable } from './features';
+import { makeDraggable, makeColumnsResizable, makeRowsResizable } from './features';
 
 import { columns } from 'api/fetchAPI';
 
@@ -36,6 +36,28 @@ export default class Table {
     tableWrapper.classList.remove('hide');
   }
 
+  handleUpdate(input) {
+    if (!input) {
+      input = tableHeader.querySelector('input');
+    }
+
+    const title = input.value;
+    if (title.trim() === '') return;
+
+    this.store.dispatch(actions.setTitle(title));
+
+    input.value = '';
+
+    this.onUpdate();
+  }
+
+  handleClear() {
+    const input = tableHeader.querySelector('input');
+    input.value = '';
+
+    this.onClear();
+  }
+
   calcPageCount() {
     const totalItems = this.store.getState().totalItems;
     const itemsPerPage = this.store.getState().itemsPerPage;
@@ -71,7 +93,7 @@ export default class Table {
 
     const createHeadRow = (item) => {
       let style = '';
-      if (styles[item.key]) {
+      if (styles && styles[item.key]) {
         style = `width: ${styles[item.key]};`;
       }
 
@@ -99,7 +121,9 @@ export default class Table {
   }
 
   makeBody() {
-    const createBodyRow = (item) => {
+    const styles = this.store.getState().rowsHeight;
+
+    const createBodyRow = (item, index) => {
       const deleteBtnHtml = `
         <td id="delete">
           <button class="btn-small danger">
@@ -130,7 +154,15 @@ export default class Table {
           })
           .join(' ') + deleteBtnHtml;
 
-      return `<tr id="${item.id}">${row}</tr>`;
+      let style = '';
+      if (styles && styles[index]) {
+        style = `height: ${styles[index]};`;
+      }
+      return `
+        <tr id="${item.id}" style="${style}">
+          ${row}
+        </tr>
+      `;
     };
 
     const currentPage = this.store.getState().page;
@@ -149,11 +181,19 @@ export default class Table {
   makeHeader() {
     tableHeader.innerHTML = TableHeader();
 
+    const input = tableHeader.querySelector('input');
+
+    input.addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') {
+        this.handleUpdate(input);
+      }
+    });
+
     const clearBtn = tableHeader.querySelector('#clear');
     const loadBtn = tableHeader.querySelector('#load');
 
-    clearBtn.addEventListener('click', this.onClear);
-    loadBtn.addEventListener('click', this.onUpdate);
+    clearBtn.addEventListener('click', () => this.handleClear());
+    loadBtn.addEventListener('click', () => this.handleUpdate());
   }
 
   makePagination() {
@@ -209,8 +249,6 @@ export default class Table {
   }
 
   handleRowDrag(oldIndex, newIndex) {
-    console.log('checkDrag', oldIndex, newIndex);
-
     if (newIndex === oldIndex || newIndex === -1 || oldIndex === -1) {
       return;
     }
@@ -235,14 +273,16 @@ export default class Table {
     this.onSave();
   }
 
-  makeRowsResizable() {}
+  handleRowResize() {
+    const body = this.table.querySelector('tbody');
+    const rows = body.querySelectorAll('tr');
+    const styles = {};
+    rows.forEach((row, index) => {
+      styles[index] = row.style.height;
+    });
 
-  makeColumnsResizable() {
-    makeColumnsResizable(this.table, () => this.handleColumnResize());
-  }
-
-  makeDraggable() {
-    makeDraggable(this.table, (row, newIndex) => this.handleRowDrag(row, newIndex));
+    this.store.dispatch(actions.rowResize(styles));
+    this.onSave();
   }
 
   handleFirstPage() {
@@ -299,9 +339,9 @@ export default class Table {
       btn.addEventListener('click', (e) => this.handleDelete(e.target));
     });
 
-    this.makeDraggable();
-    this.makeRowsResizable();
-    this.makeColumnsResizable();
+    makeDraggable(this.table, (row, newIndex) => this.handleRowDrag(row, newIndex));
+    makeRowsResizable(this.table, () => this.handleRowResize());
+    makeColumnsResizable(this.table, () => this.handleColumnResize());
   }
 
   renderTable() {

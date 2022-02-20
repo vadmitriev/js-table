@@ -1,10 +1,12 @@
 // const URL = 'https://swapi.dev/api/planets/';
-const URL = 'https://api.github.com/search/repositories?q=react&per_page=100';
+const BASE_URL = 'https://api.github.com/search/repositories';
 
-export const fetchData = async () => {
-  const itemsPerPage = 10;
+export const fetchData = async (text) => {
+  const itemsPerPage = 100;
 
-  const res = await fetch(URL);
+  const url = `${BASE_URL}?q=${text}&per_page=${itemsPerPage}`;
+
+  const res = await fetch(url);
   const data = await res.json();
 
   return {
@@ -17,11 +19,12 @@ export const columns = [
   {
     name: 'Name',
     key: 'name',
-    link_key: 'html_url',
+    link_key: 'html_url'
   },
   {
     name: 'User',
-    key: 'owner.login'
+    key: 'owner.login',
+    link_key: 'owner.html_url'
   },
   {
     name: '🍴 Forks',

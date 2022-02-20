@@ -1,5 +1,6 @@
 export const types = {
   INIT: 'INIT',
+  SET_TITLE: 'SET_TITLE',
   LOAD_DATA: 'LOAD_DATA',
   LOAD_DATA_SUCCESS: 'LOAD_DATA_SUCCESS',
   LOAD_DATA_ERROR: 'LOAD_DATA_ERROR',
@@ -18,6 +19,13 @@ export const actions = {
   init: () => {
     return {
       type: types.INIT
+    };
+  },
+
+  setTitle: (data) => {
+    return {
+      type: types.SET_TITLE,
+      payload: data
     };
   },
 

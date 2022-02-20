@@ -2,6 +2,7 @@ import { types } from './actions';
 import { get, move } from 'utils';
 
 export const initialState = {
+  title: 'JavaScript',
   isLoading: false,
   error: null,
   data: [],
@@ -21,6 +22,11 @@ export function reducer(state = initialState, action) {
   let newData;
 
   switch (action.type) {
+    case types.SET_TITLE:
+      return {
+        ...state,
+        title: action.payload
+      };
     case types.LOAD_DATA:
       return {
         ...state,

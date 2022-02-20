@@ -3,7 +3,6 @@
   align-items: center;
   justify-content: center;
   background-color: var(--background-color);
-  /* margin-top: 20%; */
 }
 
 .spinner-wrapper .spinner {

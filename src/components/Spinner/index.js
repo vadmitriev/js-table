@@ -1,5 +1,3 @@
-import { actions } from 'store';
-
 const spinnerWrapper = document.querySelector('.spinner-wrapper');
 
 export default class Spinner {
@@ -9,23 +7,18 @@ export default class Spinner {
   }
 
   hide() {
-    // this.store.dispatch(actions.changeLoading(false));
     spinnerWrapper.classList.add('hide');
   }
 
   show() {
-    // this.store.dispatch(actions.changeLoading(true));
     spinnerWrapper.classList.remove('hide');
   }
 
   render() {
     this.store.substribe(() => {
       const isLoading = this.store.getState().isLoading;
-      if (isLoading) {
-        this.show();
-      } else {
-        this.hide();
-      }
+      const fn = isLoading ? this.show : this.hide;
+      fn();
     });
   }
 }
