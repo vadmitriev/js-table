@@ -17,13 +17,10 @@ export const makeRowsResizable = (table, onDragEnd) => {
   };
 
   const createResizableRow = (row, resizer) => {
-    // let x = 0;
-    // let w = 0;
     let y = 0;
     let h = 0;
 
     const mouseDownHandler = (e) => {
-      //   x = e.clientX;
       y = e.clientY;
 
       const styles = window.getComputedStyle(row);

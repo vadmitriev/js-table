@@ -79,4 +79,3 @@ renderPage();
 
 store.dispatch(actions.init());
 
-//window.addEventListener('load', createPage);

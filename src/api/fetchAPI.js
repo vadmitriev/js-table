@@ -1,4 +1,3 @@
-// const URL = 'https://swapi.dev/api/planets/';
 const BASE_URL = 'https://api.github.com/search/repositories';
 
 export const fetchData = async (text) => {
