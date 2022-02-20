@@ -1,4 +1,4 @@
-import makeDraggable from './features/draggable';
+import { makeDraggable, makeColumnsResizable } from './features';
 
 import { columns } from 'api/fetchAPI';
 
@@ -24,11 +24,6 @@ export default class Table {
     this.data = store.getState().data;
     this.tableData = this.data;
 
-    this.index = {
-      old: null,
-      new: null
-    };
-
     this.table = table;
     this.render();
   }
@@ -48,6 +43,8 @@ export default class Table {
   }
 
   makeHead() {
+    const styles = this.store.getState().columnsWidth;
+
     const makeArrow = (item) => {
       let arrow = '⬍';
       let className = 'arrow';
@@ -73,8 +70,13 @@ export default class Table {
     };
 
     const createHeadRow = (item) => {
+      let style = '';
+      if (styles[item.key]) {
+        style = `width: ${styles[item.key]};`;
+      }
+
       return `
-	 	    <th id=${item.key}>
+	 	    <th id=${item.key} style="${style}">
           <span>
             ${item.name}
           </span>
@@ -179,10 +181,6 @@ export default class Table {
     });
   }
 
-  makeColumnsResizable() {}
-
-  makeRowsResizable() {}
-
   handleSort(el) {
     let th;
     let arrow;
@@ -197,6 +195,10 @@ export default class Table {
       arrow = el.querySelector('.arrow');
     }
 
+    if (!th || !arrow) {
+      return;
+    }
+
     const id = th.id;
 
     const up = arrow.classList.contains('up-down') || arrow.classList.contains('up');
@@ -206,32 +208,7 @@ export default class Table {
     this.onSave();
   }
 
-  handleDragEnd(e) {
-    console.log('dragEnd', e);
-  }
-
-  handleDrop(e) {
-    console.log('drop', e);
-  }
-
-  // handleMouseUp(el) {
-  //   let oldIndex = this.index.old;
-  //   let newIndex = this.index.new - 1;
-
-  //   if (newIndex === oldIndex || newIndex === -1 || oldIndex === -1) {
-  //     return;
-  //   }
-  //   const itemsPerPage = this.store.getState().itemsPerPage;
-  //   let page = this.store.getState().page - 1;
-
-  //   oldIndex += itemsPerPage * page;
-  //   newIndex += itemsPerPage * page;
-
-  //   this.store.dispatch(actions.moveRow(oldIndex, newIndex));
-  //   this.onSave();
-  // }
-
-  checkDrag(oldIndex, newIndex) {
+  handleRowDrag(oldIndex, newIndex) {
     console.log('checkDrag', oldIndex, newIndex);
 
     if (newIndex === oldIndex || newIndex === -1 || oldIndex === -1) {
@@ -245,15 +222,27 @@ export default class Table {
 
     this.store.dispatch(actions.moveRow(oldIndex, newIndex));
     this.onSave();
-    // const oldIndex = this.tableData.findIndex((item) => Number(item.id) === Number(row.id));
-    // this.index.old = oldIndex;
-    // this.index.new = newIndex;
+  }
+
+  handleColumnResize() {
+    const cols = table.querySelectorAll('th');
+    const styles = {};
+    cols.forEach((col) => {
+      styles[col.id] = col.style.width;
+    });
+
+    this.store.dispatch(actions.columnResize(styles));
+    this.onSave();
+  }
+
+  makeRowsResizable() {}
+
+  makeColumnsResizable() {
+    makeColumnsResizable(this.table, () => this.handleColumnResize());
   }
 
   makeDraggable() {
-    // this.table.addEventListener('mouseup', (e) => this.handleMouseUp(e.target.parentNode));
-
-    makeDraggable(this.table, (row, newIndex) => this.checkDrag(row, newIndex));
+    makeDraggable(this.table, (row, newIndex) => this.handleRowDrag(row, newIndex));
   }
 
   handleFirstPage() {
@@ -325,7 +314,6 @@ export default class Table {
       </tbody>		  
 	  `;
 
-    // table.classList.add('draggable-table');
     table.innerHTML = html;
 
     if (!this.table) {

@@ -10,6 +10,8 @@ export const types = {
   CHANGE_EMPTY: 'CHANGE_EMPTY',
   SORT_DATA: 'SORT_DATA',
   MOVE_ROW: 'MOVE_ROW',
+  COLUMN_RESIZE: 'COLUMN_RESIZE',
+  ROW_RESIZE: 'ROW_RESIZE'
 };
 
 export const actions = {
@@ -83,8 +85,22 @@ export const actions = {
   moveRow: (startIndex, endIndex) => {
     return {
       type: types.MOVE_ROW,
-      payload: { startIndex, endIndex },
-    }
+      payload: { startIndex, endIndex }
+    };
+  },
+
+  columnResize: (data) => {
+    return {
+      type: types.COLUMN_RESIZE,
+      payload: data
+    };
+  },
+
+  rowResize: (data) => {
+    return {
+      type: types.ROW_RESIZE,
+      payload: data
+    };
   }
 };
 

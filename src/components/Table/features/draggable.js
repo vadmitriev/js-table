@@ -1,6 +1,6 @@
-// Source: https://htmldom.dev/drag-and-drop-table-row/
+/* Source: https://htmldom.dev/drag-and-drop-table-row/ */
 
-const makeDraggable = (table, onDragEnd) => {
+export const makeDraggable = (table, onDragEnd) => {
   let draggingEle;
   let draggingRowIndex;
   let placeholder;
@@ -174,5 +174,3 @@ const makeDraggable = (table, onDragEnd) => {
     firstCell.addEventListener('mousedown', mouseDownHandler);
   });
 };
-
-export default makeDraggable;

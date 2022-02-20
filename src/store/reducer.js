@@ -102,6 +102,16 @@ export function reducer(state = initialState, action) {
         ...state,
         data: newData
       };
+    case types.COLUMN_RESIZE:
+      return {
+        ...state,
+        columnsWidth: action.payload
+      };
+    case types.ROW_RESIZE:
+      return {
+        ...state,
+        rowsHeight: action.payload
+      };
     default:
       return state;
   }
