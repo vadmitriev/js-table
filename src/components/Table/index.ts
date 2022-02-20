@@ -1,20 +1,38 @@
-import { makeDraggable, makeColumnsResizable, makeRowsResizable } from './features';
+import {
+  makeDraggable,
+  makeColumnsResizable,
+  makeRowsResizable,
+} from "./features";
 
-import { columns } from 'api/fetchAPI';
+import { columns } from "api/fetchAPI";
 
-import { TableHeader } from './tableHeader';
-import { Pagination } from './pagination';
+import { TableHeader } from "./tableHeader";
+import { Pagination } from "./pagination";
 
-import { get } from 'utils';
-import { actions } from 'store';
+import { get } from "utils/index";
+import { actions } from "store/index";
+import { Store, Direction } from "constants/types";
 
-const tableWrapper = document.querySelector('.table-wrapper');
-const tableHeader = tableWrapper.querySelector('.table-header');
-const pagination = tableWrapper.querySelector('.pagination-wrapper');
-const table = tableWrapper.querySelector('table');
+const tableWrapper = document.querySelector(".table-wrapper");
+const tableHeader = tableWrapper.querySelector(".table-header");
+const pagination = tableWrapper.querySelector(".pagination-wrapper");
+const table = tableWrapper.querySelector("table");
 
 export default class Table {
-  constructor({ store, onUpdate, onSave, onClear }) {
+  store: Store;
+  onUpdate: () => void;
+  onSave: () => void;
+  onClear: () => void;
+  data: any[];
+  tableData: any[];
+  table: HTMLTableElement;
+
+  constructor(
+    store: Store,
+    onUpdate: () => void,
+    onSave: () => void,
+    onClear: () => void
+  ) {
     this.store = store;
 
     this.onUpdate = onUpdate;
@@ -29,31 +47,31 @@ export default class Table {
   }
 
   hide() {
-    tableWrapper.classList.add('hide');
+    tableWrapper.classList.add("hide");
   }
 
   show() {
-    tableWrapper.classList.remove('hide');
+    tableWrapper.classList.remove("hide");
   }
 
-  handleUpdate(input) {
+  handleUpdate(input?: null | HTMLInputElement) {
     if (!input) {
-      input = tableHeader.querySelector('input');
+      input = tableHeader.querySelector("input");
     }
 
     const title = input.value;
-    if (title.trim() === '') return;
+    if (title.trim() === "") return;
 
     this.store.dispatch(actions.setTitle(title));
 
-    input.value = '';
+    input.value = "";
 
     this.onUpdate();
   }
 
   handleClear() {
-    const input = tableHeader.querySelector('input');
-    input.value = '';
+    const input = tableHeader.querySelector("input");
+    input.value = "";
 
     this.onClear();
   }
@@ -67,23 +85,23 @@ export default class Table {
   makeHead() {
     const styles = this.store.getState().columnsWidth;
 
-    const makeArrow = (item) => {
-      let arrow = '⬍';
-      let className = 'arrow';
+    const makeArrow = (item: any) => {
+      let arrow = "⬍";
+      let className = "arrow";
 
       const key = this.store.getState().sortBy.key;
       const direction = this.store.getState().sortBy.direction;
 
       if (item.key === key && direction) {
-        if (direction === 'up') {
-          className += ' up';
-          arrow = '▲';
+        if (direction === Direction.up) {
+          className += " up";
+          arrow = "▲";
         } else {
-          className += ' down';
-          arrow = '▼';
+          className += " down";
+          arrow = "▼";
         }
       } else {
-        className += 'up-down';
+        className += "up-down";
       }
 
       return `
@@ -91,8 +109,8 @@ export default class Table {
       `;
     };
 
-    const createHeadRow = (item) => {
-      let style = '';
+    const createHeadRow = (item: any) => {
+      let style = "";
       if (styles && styles[item.key]) {
         style = `width: ${styles[item.key]};`;
       }
@@ -115,7 +133,7 @@ export default class Table {
       `;
     };
 
-    const html = columns.map(createHeadRow).join(' ') + createDeleteAction();
+    const html = columns.map(createHeadRow).join(" ") + createDeleteAction();
 
     return html;
   }
@@ -123,7 +141,7 @@ export default class Table {
   makeBody() {
     const styles = this.store.getState().rowsHeight;
 
-    const createBodyRow = (item, index) => {
+    const createBodyRow = (item: any, index: number) => {
       const deleteBtnHtml = `
         <td id="delete">
           <button class="btn-small danger">
@@ -132,15 +150,15 @@ export default class Table {
         </td>
       `;
 
-      const getValue = (item, col) => {
+      const getValue = (item: any, col: any) => {
         if (col.link_key) {
           return `
-            <a href="${get(item, col.link_key, '')}" target="_blank">
-              ${get(item, col.key, '-')}
+            <a href="${get(item, col.link_key, "")}" target="_blank">
+              ${get(item, col.key, "-")}
             </a>
           `;
         }
-        return get(item, col.key, '-');
+        return get(item, col.key, "-");
       };
 
       const row =
@@ -152,9 +170,9 @@ export default class Table {
               </td>
             `;
           })
-          .join(' ') + deleteBtnHtml;
+          .join(" ") + deleteBtnHtml;
 
-      let style = '';
+      let style = "";
       if (styles && styles[index]) {
         style = `height: ${styles[index]};`;
       }
@@ -173,7 +191,7 @@ export default class Table {
     const slice = this.data.slice(start, end);
     this.tableData = slice;
 
-    const html = slice.map(createBodyRow).join(' ');
+    const html = slice.map(createBodyRow).join(" ");
 
     return html;
   }
@@ -181,19 +199,19 @@ export default class Table {
   makeHeader() {
     tableHeader.innerHTML = TableHeader();
 
-    const input = tableHeader.querySelector('input');
+    const input = tableHeader.querySelector("input");
 
-    input.addEventListener('keyup', (e) => {
-      if (e.key === 'Enter') {
+    input.addEventListener("keyup", (e) => {
+      if (e.key === "Enter") {
         this.handleUpdate(input);
       }
     });
 
-    const clearBtn = tableHeader.querySelector('#clear');
-    const loadBtn = tableHeader.querySelector('#load');
+    const clearBtn = tableHeader.querySelector("#clear");
+    const loadBtn = tableHeader.querySelector("#load");
 
-    clearBtn.addEventListener('click', () => this.handleClear());
-    loadBtn.addEventListener('click', () => this.handleUpdate());
+    clearBtn.addEventListener("click", () => this.handleClear());
+    loadBtn.addEventListener("click", () => this.handleUpdate());
   }
 
   makePagination() {
@@ -209,30 +227,32 @@ export default class Table {
 
     pagination.innerHTML = newHtml;
 
-    const firstBtn = pagination.querySelector('#first');
-    const lastBtn = pagination.querySelector('#last');
+    const firstBtn = pagination.querySelector("#first");
+    const lastBtn = pagination.querySelector("#last");
 
-    firstBtn.addEventListener('click', (e) => this.handleFirstPage(e.target));
-    lastBtn.addEventListener('click', (e) => this.handleLastPage(e.target));
+    firstBtn.addEventListener("click", () => this.handleFirstPage());
+    lastBtn.addEventListener("click", () => this.handleLastPage());
 
-    const pageBtns = tableWrapper.querySelectorAll('#page');
+    const pageBtns = tableWrapper.querySelectorAll("#page");
     pageBtns.forEach((btn) => {
-      btn.addEventListener('click', (e) => this.handleChangePage(e.target));
+      btn.addEventListener("click", (e: any) =>
+        this.handleChangePage(e.target)
+      );
     });
   }
 
-  handleSort(el) {
+  handleSort(el: HTMLElement) {
     let th;
     let arrow;
 
     const elType = el.tagName.toLowerCase();
-    if (elType === 'span') {
-      th = el.closest('th');
+    if (elType === "span") {
+      th = el.closest("th");
       arrow = el;
     }
-    if (elType === 'th') {
+    if (elType === "th") {
       th = el;
-      arrow = el.querySelector('.arrow');
+      arrow = el.querySelector(".arrow");
     }
 
     if (!th || !arrow) {
@@ -241,14 +261,15 @@ export default class Table {
 
     const id = th.id;
 
-    const up = arrow.classList.contains('up-down') || arrow.classList.contains('up');
-    const direction = up ? 'down' : 'up';
+    const up =
+      arrow.classList.contains("up-down") || arrow.classList.contains("up");
+    const direction = up ? Direction.down : Direction.up;
 
     this.store.dispatch(actions.sortData(id, direction));
     this.onSave();
   }
 
-  handleRowDrag(oldIndex, newIndex) {
+  handleRowDrag(oldIndex: number, newIndex: number) {
     if (newIndex === oldIndex || newIndex === -1 || oldIndex === -1) {
       return;
     }
@@ -263,8 +284,8 @@ export default class Table {
   }
 
   handleColumnResize() {
-    const cols = table.querySelectorAll('th');
-    const styles = {};
+    const cols = table.querySelectorAll("th");
+    const styles: any = {};
     cols.forEach((col) => {
       styles[col.id] = col.style.width;
     });
@@ -274,9 +295,9 @@ export default class Table {
   }
 
   handleRowResize() {
-    const body = this.table.querySelector('tbody');
-    const rows = body.querySelectorAll('tr');
-    const styles = {};
+    const body = this.table.querySelector("tbody");
+    const rows = body.querySelectorAll("tr");
+    const styles: any = {};
     rows.forEach((row, index) => {
       styles[index] = row.style.height;
     });
@@ -305,7 +326,7 @@ export default class Table {
     this.onChangePage(pageCount);
   }
 
-  handleChangePage(btn) {
+  handleChangePage(btn: HTMLButtonElement) {
     const page = Number(btn.textContent);
     const currentPage = this.store.getState().page;
     if (Number(page) === currentPage) {
@@ -315,12 +336,12 @@ export default class Table {
     this.onChangePage(page);
   }
 
-  onChangePage(page) {
+  onChangePage(page: number) {
     this.store.dispatch(actions.changePage(page));
     this.onSave();
   }
 
-  handleDelete(btn) {
+  handleDelete(btn: Element) {
     const row = btn.parentElement.parentElement;
     row.remove();
     const id = Number(row.id);
@@ -329,17 +350,19 @@ export default class Table {
   }
 
   bindEvents() {
-    const thArray = tableWrapper.querySelectorAll('th');
+    const thArray = tableWrapper.querySelectorAll("th");
     thArray.forEach((th) => {
-      th.addEventListener('click', (e) => this.handleSort(e.target));
+      th.addEventListener("click", (e: any) => this.handleSort(e.target));
     });
 
-    const pageBtns = tableWrapper.querySelectorAll('#delete');
+    const pageBtns = tableWrapper.querySelectorAll("#delete");
     pageBtns.forEach((btn) => {
-      btn.addEventListener('click', (e) => this.handleDelete(e.target));
+      btn.addEventListener("click", (e: any) => this.handleDelete(e.target));
     });
 
-    makeDraggable(this.table, (row, newIndex) => this.handleRowDrag(row, newIndex));
+    makeDraggable(this.table, (row, newIndex) =>
+      this.handleRowDrag(row, newIndex)
+    );
     makeRowsResizable(this.table, () => this.handleRowResize());
     makeColumnsResizable(this.table, () => this.handleColumnResize());
   }

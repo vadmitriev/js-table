@@ -1,12 +1,14 @@
-const headerWrapper = document.querySelector('.header-wrapper');
+const headerWrapper = document.querySelector(".header-wrapper");
 
 export default class Header {
-  constructor(title = 'Title') {
+  title: string;
+
+  constructor(title = "Title") {
     this.title = title.toUpperCase();
     this.render();
   }
 
-  setTitle(title) {
+  setTitle(title: string) {
     if (this.title.toUpperCase() === title.toUpperCase()) {
       return;
     }

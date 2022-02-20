@@ -1,9 +1,15 @@
-import { actions } from 'store';
+import { Store } from "constants/types";
+import { actions } from "store/index";
 
-const emptyBlock = document.querySelector('.empty');
+const emptyBlock = document.querySelector(".empty");
 
 export default class EmptyBlock {
-  constructor(store, onClick) {
+  store: Store;
+  onClick: () => void;
+  error: any;
+  input: HTMLInputElement;
+
+  constructor(store: Store, onClick: () => void) {
     this.store = store;
     this.onClick = onClick;
     this.error = store.getState().error;
@@ -14,11 +20,11 @@ export default class EmptyBlock {
   }
 
   hide() {
-    emptyBlock.classList.add('hide');
+    emptyBlock.classList.add("hide");
   }
 
   show() {
-    emptyBlock.classList.remove('hide');
+    emptyBlock.classList.remove("hide");
   }
 
   formLoadContentBlock() {
@@ -34,24 +40,24 @@ export default class EmptyBlock {
   handleLoad() {
     const title = this.input.value;
 
-    if (title.trim() === '') return;
+    if (title.trim() === "") return;
     this.store.dispatch(actions.setTitle(title));
 
-    this.input.value = '';
+    this.input.value = "";
 
     this.hide();
     this.onClick();
   }
 
   addButtonAction() {
-    const button = emptyBlock.querySelector('#load');
-    button.addEventListener('click', () => this.handleLoad());
+    const button = emptyBlock.querySelector("#load");
+    button.addEventListener("click", () => this.handleLoad());
   }
 
   addInputAction() {
-    this.input = emptyBlock.querySelector('input');
-    this.input.addEventListener('keyup', (e) => {
-      if (e.key === 'Enter') {
+    this.input = emptyBlock.querySelector("input");
+    this.input.addEventListener("keyup", (e) => {
+      if (e.key === "Enter") {
         this.handleLoad();
       }
     });

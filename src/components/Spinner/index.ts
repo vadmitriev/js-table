@@ -1,17 +1,21 @@
-const spinnerWrapper = document.querySelector('.spinner-wrapper');
+import { Store } from "constants/types";
+
+const spinnerWrapper = document.querySelector(".spinner-wrapper");
 
 export default class Spinner {
-  constructor(store) {
+  store: Store;
+
+  constructor(store: Store) {
     this.store = store;
     this.render();
   }
 
   hide() {
-    spinnerWrapper.classList.add('hide');
+    spinnerWrapper.classList.add("hide");
   }
 
   show() {
-    spinnerWrapper.classList.remove('hide');
+    spinnerWrapper.classList.remove("hide");
   }
 
   render() {

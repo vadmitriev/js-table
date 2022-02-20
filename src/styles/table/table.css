@@ -1,7 +1,7 @@
-@import './header.css';
-@import './pagination.css';
-@import './dragdrop.css';
-@import './resize.css';
+@import "./header.css";
+@import "./pagination.css";
+@import "./dragdrop.css";
+@import "./resize.css";
 
 .table-wrapper {
   display: block;

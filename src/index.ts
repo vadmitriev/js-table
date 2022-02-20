@@ -1,15 +1,15 @@
-import { fetchData } from 'api/fetchAPI';
-import { saveToLocalStorage, getFromLocalStorage } from 'utils/localStorage.js';
-import { LS_KEY } from 'utils/constants';
+import { fetchData } from "api/fetchAPI";
+import { saveToLocalStorage, getFromLocalStorage } from "utils/localStorage";
+import { LS_KEY } from "./constants";
 
-import { actions, reducer, initialState, createStore } from 'store';
+import { actions, reducer, initialState, createStore } from "store/index";
 
-import Header from 'components/Header';
-import Table from 'components/Table';
-import EmptyBlock from 'components/EmptyBlock';
-import Spinner from 'components/Spinner';
+import Header from "components/Header";
+import Table from "components/Table";
+import EmptyBlock from "components/EmptyBlock";
+import Spinner from "components/Spinner";
 
-import './styles/style.css';
+import "./styles/style.css";
 
 const lsData = getFromLocalStorage(LS_KEY);
 
@@ -47,8 +47,8 @@ const updateData = async () => {
 };
 
 const clearTable = () => {
-  store.dispatch(actions.setTitle(''));
-  header.setTitle('');
+  store.dispatch(actions.setTitle(""));
+  header.setTitle("");
 
   store.dispatch(actions.changeEmpty(true));
   store.dispatch(actions.clearTable());
@@ -63,12 +63,7 @@ const renderPage = () => {
   const title = store.getState().title;
   header.setTitle(title);
 
-  new Table({
-    store,
-    onUpdate: updateData,
-    onClear: clearTable,
-    onSave: saveData
-  });
+  new Table(store, updateData, saveData, clearTable);
 
   new EmptyBlock(store, loadData);
 
@@ -78,4 +73,3 @@ const renderPage = () => {
 renderPage();
 
 store.dispatch(actions.init());
-

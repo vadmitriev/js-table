@@ -1,8 +1,8 @@
-export const Pagination = (activePage, pageCount) => {
+export const Pagination = (activePage: number, pageCount: number): string => {
   const generateButtons = () => {
-    let html = '';
+    let html = "";
     for (let i = 1; i <= pageCount; i++) {
-      const className = `btn-small ${activePage === i ? 'active' : ''}`;
+      const className = `btn-small ${activePage === i ? "active" : ""}`;
       html += `
 	  	<button type="button" id="page" class="${className}">
 			${i}

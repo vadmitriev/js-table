@@ -1,4 +1,4 @@
-export const TableHeader = () => {
+export const TableHeader = (): string => {
   return `
 	<div class="table-header__actions">
 		<div class="table-header__input-wrapper">
