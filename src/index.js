@@ -31,8 +31,14 @@ const loadData = async () => {
     const title = store.getState().title;
     header.setTitle(title);
 
-    const data = await fetchData(title);
-    store.dispatch(actions.loadDataSuccess(data));
+    const res = await fetchData(title);
+
+    store.dispatch(actions.loadDataSuccess(res));
+
+    if (res?.data?.length === 0) {
+      clearTable();
+    }
+
     saveData();
   } catch (e) {
     store.dispatch(actions.loadDataError(e));
@@ -78,4 +84,3 @@ const renderPage = () => {
 renderPage();
 
 store.dispatch(actions.init());
-
