@@ -1,5 +1,5 @@
-import { types } from './actions';
 import { get, move } from 'utils';
+import { types } from './actions';
 
 export const initialState = {
   title: 'JavaScript',
@@ -18,7 +18,7 @@ export const initialState = {
   }
 };
 
-export function reducer(state = initialState, action) {
+export function reducer(state = initialState, action = {}) {
   let newData;
 
   switch (action.type) {
@@ -75,8 +75,8 @@ export function reducer(state = initialState, action) {
         showEmpty: action.payload
       };
     case types.SORT_DATA:
-      const key = action.payload.key;
-      const direction = action.payload.direction;
+      // eslint-disable-next-line no-case-declarations
+      const { key, direction } = action.payload;
 
       if (direction) {
         newData = state.data.sort((a, b) => {

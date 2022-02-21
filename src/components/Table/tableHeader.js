@@ -1,4 +1,4 @@
-export const TableHeader = () => {
+const TableHeader = () => {
   return `
 	<div class="table-header__actions">
 		<div class="table-header__input-wrapper">
@@ -18,3 +18,5 @@ export const TableHeader = () => {
 	</div>
 	`;
 };
+
+export default TableHeader;

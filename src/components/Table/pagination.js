@@ -1,7 +1,7 @@
-export const Pagination = (activePage, pageCount) => {
+const Pagination = (activePage, pageCount) => {
   const generateButtons = () => {
     let html = '';
-    for (let i = 1; i <= pageCount; i++) {
+    for (let i = 1; i <= pageCount; i += 1) {
       const className = `btn-small ${activePage === i ? 'active' : ''}`;
       html += `
 	  	<button type="button" id="page" class="${className}">
@@ -25,3 +25,5 @@ export const Pagination = (activePage, pageCount) => {
 		</div>
 	`;
 };
+
+export default Pagination;

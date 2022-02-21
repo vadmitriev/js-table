@@ -1,4 +1,4 @@
-export function createStore(rootReducer, initialState) {
+export const createStore = (rootReducer, initialState) => {
   let state = rootReducer(initialState, { type: '__INIT__' });
   const subscribers = [];
 
@@ -14,4 +14,6 @@ export function createStore(rootReducer, initialState) {
       return state;
     }
   };
-}
+};
+
+export default createStore;

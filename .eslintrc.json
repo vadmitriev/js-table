@@ -5,17 +5,13 @@
 	},
 	"extends": [
 		"airbnb-base",
-		"plugin:prettier/recommended",
-		"plugin:@typescript-eslint/eslint-recommended",
-		"plugin:@typescript-eslint/recommended"
+		"plugin:prettier/recommended"
 	],
-	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		"ecmaVersion": 2020,
 		"sourceType": "module"
 	},
 	"plugins": [
-		"@typescript-eslint",
 		"prettier"
 	],
 	"rules": {
@@ -24,13 +20,6 @@
 			"error",
 			"always"
 		],
-		"space-before-function-paren": [
-			"error",
-			{
-				"anonymous": "ignore",
-				"named": "always"
-			}
-		],
 		"func-names": [
 			"error",
 			"never"
@@ -38,16 +27,15 @@
 		"import/extensions": [
 			0,
 			"never"
+		],
+		"import/no-unresolved": [
+			2,
+			{ "caseSensitive": false }
 		]
 	},
 	"settings": {
 		"import/resolver": {
-			"node": {
-				"extensions": [
-					".js",
-					".jsx"
-				]
-			}
+			"webpack": "webpack.config.js"
 		}
 	}
 }

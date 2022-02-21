@@ -1,12 +1,12 @@
-import { makeDraggable, makeColumnsResizable, makeRowsResizable } from './features';
+/* eslint-disable no-param-reassign */
 
 import { columns } from 'api/fetchAPI';
-
-import { TableHeader } from './tableHeader';
-import { Pagination } from './pagination';
-
 import { get } from 'utils';
 import { actions } from 'store';
+import { makeColumnsResizable, makeDraggable, makeRowsResizable } from './features';
+
+import TableHeader from './tableHeader';
+import Pagination from './pagination';
 
 const tableWrapper = document.querySelector('.table-wrapper');
 const tableHeader = tableWrapper.querySelector('.table-header');
@@ -22,17 +22,16 @@ export default class Table {
     this.onSave = onSave;
 
     this.data = store.getState().data;
-    this.tableData = this.data;
 
     this.table = table;
     this.render();
   }
 
-  hide() {
+  static hide() {
     tableWrapper.classList.add('hide');
   }
 
-  show() {
+  static show() {
     tableWrapper.classList.remove('hide');
   }
 
@@ -59,8 +58,8 @@ export default class Table {
   }
 
   calcPageCount() {
-    const totalItems = this.store.getState().totalItems;
-    const itemsPerPage = this.store.getState().itemsPerPage;
+    const { totalItems } = this.store.getState();
+    const { itemsPerPage } = this.store.getState();
     return Math.ceil(totalItems / itemsPerPage);
   }
 
@@ -71,8 +70,8 @@ export default class Table {
       let arrow = '⬍';
       let className = 'arrow';
 
-      const key = this.store.getState().sortBy.key;
-      const direction = this.store.getState().sortBy.direction;
+      const { key } = this.store.getState().sortBy;
+      const { direction } = this.store.getState().sortBy;
 
       if (item.key === key && direction) {
         if (direction === 'up') {
@@ -98,7 +97,7 @@ export default class Table {
       }
 
       return `
-	 	    <th id=${item.key} style="${style}">
+	 	    <th id="${item.key}" style="${style}">
           <span>
             ${item.name}
           </span>
@@ -115,9 +114,7 @@ export default class Table {
       `;
     };
 
-    const html = columns.map(createHeadRow).join(' ') + createDeleteAction();
-
-    return html;
+    return columns.map(createHeadRow).join(' ') + createDeleteAction();
   }
 
   makeBody() {
@@ -132,7 +129,7 @@ export default class Table {
         </td>
       `;
 
-      const getValue = (item, col) => {
+      const getValue = (col) => {
         if (col.link_key) {
           return `
             <a href="${get(item, col.link_key, '')}" target="_blank">
@@ -148,7 +145,7 @@ export default class Table {
           .map((col) => {
             return `
               <td id="${col.key}">
-                ${getValue(item, col)}
+                ${getValue(col)}
               </td>
             `;
           })
@@ -166,16 +163,13 @@ export default class Table {
     };
 
     const currentPage = this.store.getState().page;
-    const itemsPerPage = this.store.getState().itemsPerPage;
+    const { itemsPerPage } = this.store.getState();
 
     const start = (currentPage - 1) * itemsPerPage;
     const end = currentPage * itemsPerPage;
     const slice = this.data.slice(start, end);
-    this.tableData = slice;
 
-    const html = slice.map(createBodyRow).join(' ');
-
-    return html;
+    return slice.map(createBodyRow).join(' ');
   }
 
   makeHeader() {
@@ -239,7 +233,7 @@ export default class Table {
       return;
     }
 
-    const id = th.id;
+    const { id } = th;
 
     const up = arrow.classList.contains('up-down') || arrow.classList.contains('up');
     const direction = up ? 'down' : 'up';
@@ -252,8 +246,8 @@ export default class Table {
     if (newIndex === oldIndex || newIndex === -1 || oldIndex === -1) {
       return;
     }
-    const itemsPerPage = this.store.getState().itemsPerPage;
-    let page = this.store.getState().page - 1;
+    const { itemsPerPage } = this.store.getState();
+    const page = this.store.getState().page - 1;
 
     oldIndex += itemsPerPage * page - 1;
     newIndex += itemsPerPage * page - 1;
@@ -345,7 +339,7 @@ export default class Table {
   }
 
   renderTable() {
-    const html = `
+    table.innerHTML = `
       <thead>
         ${this.makeHead()}
       </thead>
@@ -354,10 +348,8 @@ export default class Table {
       </tbody>		  
 	  `;
 
-    table.innerHTML = html;
-
     if (!this.table) {
-      this.show();
+      Table.show();
       return;
     }
 
@@ -365,7 +357,7 @@ export default class Table {
 
     this.bindEvents();
 
-    this.show();
+    Table.show();
   }
 
   render() {
@@ -376,7 +368,7 @@ export default class Table {
       this.data = this.store.getState().data;
 
       if (this.data?.length === 0) {
-        this.hide();
+        Table.hide();
         return;
       }
 

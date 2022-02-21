@@ -1,6 +1,6 @@
 /* Source: https://htmldom.dev/drag-and-drop-table-row/ */
 
-export const makeDraggable = (table, onDragEnd) => {
+const makeDraggable = (table, onDragEnd) => {
   let draggingEle;
   let draggingRowIndex;
   let placeholder;
@@ -28,7 +28,7 @@ export const makeDraggable = (table, onDragEnd) => {
 
   const cloneTable = () => {
     const rect = table.getBoundingClientRect();
-    const width = parseInt(window.getComputedStyle(table).width);
+    const width = parseInt(window.getComputedStyle(table).width, 10);
 
     list = document.createElement('div');
     list.classList.add('clone-list');
@@ -37,6 +37,7 @@ export const makeDraggable = (table, onDragEnd) => {
     list.style.top = `${rect.top}px`;
     table.parentNode.insertBefore(list, table);
 
+    // eslint-disable-next-line no-param-reassign
     table.style.visibility = 'hidden';
 
     table.querySelectorAll('tr').forEach((row) => {
@@ -52,7 +53,7 @@ export const makeDraggable = (table, onDragEnd) => {
       const cells = [].slice.call(row.children);
       cells.forEach((cell) => {
         const newCell = cell.cloneNode(true);
-        newCell.style.width = `${parseInt(window.getComputedStyle(cell).width)}px`;
+        newCell.style.width = `${parseInt(window.getComputedStyle(cell).width, 10)}px`;
         newRow.appendChild(newCell);
       });
 
@@ -60,17 +61,6 @@ export const makeDraggable = (table, onDragEnd) => {
       item.appendChild(newTable);
       list.appendChild(item);
     });
-  };
-
-  const mouseDownHandler = (e) => {
-    const originalRow = e.target.parentNode;
-    draggingRowIndex = [].slice.call(table.querySelectorAll('tr')).indexOf(originalRow);
-
-    x = e.clientX;
-    y = e.clientY;
-
-    document.addEventListener('mousemove', mouseMoveHandler);
-    document.addEventListener('mouseup', mouseUpHandler);
   };
 
   const mouseMoveHandler = (e) => {
@@ -130,7 +120,9 @@ export const makeDraggable = (table, onDragEnd) => {
 
   const mouseUpHandler = () => {
     // Remove the placeholder
-    placeholder && placeholder.parentNode.removeChild(placeholder);
+    if (placeholder) {
+      placeholder.parentNode.removeChild(placeholder);
+    }
 
     draggingEle.classList.remove('dragging');
     draggingEle.style.removeProperty('top');
@@ -144,13 +136,15 @@ export const makeDraggable = (table, onDragEnd) => {
     list.parentNode.removeChild(list);
 
     // Move the dragged row to `endRowIndex`
-    let rows = [].slice.call(table.querySelectorAll('tr'));
-    draggingRowIndex > endRowIndex
-      ? rows[endRowIndex].parentNode.insertBefore(rows[draggingRowIndex], rows[endRowIndex])
-      : rows[endRowIndex].parentNode.insertBefore(
-          rows[draggingRowIndex],
-          rows[endRowIndex].nextSibling
-        );
+    const rows = [].slice.call(table.querySelectorAll('tr'));
+    if (draggingRowIndex > endRowIndex) {
+      rows[endRowIndex].parentNode.insertBefore(rows[draggingRowIndex], rows[endRowIndex]);
+    } else {
+      rows[endRowIndex].parentNode.insertBefore(
+        rows[draggingRowIndex],
+        rows[endRowIndex].nextSibling
+      );
+    }
 
     // Bring back the table
     table.style.removeProperty('visibility');
@@ -160,6 +154,17 @@ export const makeDraggable = (table, onDragEnd) => {
     document.removeEventListener('mouseup', mouseUpHandler);
 
     onDragEnd(draggingRowIndex, endRowIndex);
+  };
+
+  const mouseDownHandler = (e) => {
+    const originalRow = e.target.parentNode;
+    draggingRowIndex = [].slice.call(table.querySelectorAll('tr')).indexOf(originalRow);
+
+    x = e.clientX;
+    y = e.clientY;
+
+    document.addEventListener('mousemove', mouseMoveHandler);
+    document.addEventListener('mouseup', mouseUpHandler);
   };
 
   table.querySelectorAll('tr').forEach((row, index) => {
@@ -174,3 +179,5 @@ export const makeDraggable = (table, onDragEnd) => {
     firstCell.addEventListener('mousedown', mouseDownHandler);
   });
 };
+
+export default makeDraggable;

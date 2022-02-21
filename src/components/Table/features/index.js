@@ -1,3 +1,3 @@
-export { makeDraggable } from './draggable';
-export { makeColumnsResizable } from './resizeColumns';
-export { makeRowsResizable } from './resizeRows';
+export { default as makeDraggable } from './draggable';
+export { default as makeColumnsResizable } from './resizeColumns';
+export { default as makeRowsResizable } from './resizeRows';

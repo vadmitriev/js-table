@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import { actions } from 'store';
 
 const emptyBlock = document.querySelector('.empty');
@@ -13,15 +14,15 @@ export default class EmptyBlock {
     this.render();
   }
 
-  hide() {
+  static hide() {
     emptyBlock.classList.add('hide');
   }
 
-  show() {
+  static show() {
     emptyBlock.classList.remove('hide');
   }
 
-  formLoadContentBlock() {
+  static formLoadContentBlock() {
     return `
       <div class="empty__load-content">
         <button id="load" class="btn-medium">
@@ -39,7 +40,7 @@ export default class EmptyBlock {
 
     this.input.value = '';
 
-    this.hide();
+    EmptyBlock.hide();
     this.onClick();
   }
 
@@ -57,7 +58,7 @@ export default class EmptyBlock {
     });
   }
 
-  inputWrapperHtml() {
+  static inputWrapperHtml() {
     return `
       <div class="empty-header__input-wrapper">
         <input 
@@ -70,56 +71,51 @@ export default class EmptyBlock {
     `;
   }
 
-  defaultHtml() {
-    const html = `
+  static defaultHtml() {
+    return `
       <div class="empty-header">
         <div class="emtpy-header__text">
           Тут ничего нет...
         </div>  
-        ${this.inputWrapperHtml()}
+        ${EmptyBlock.inputWrapperHtml()}
       </div>
-      ${this.formLoadContentBlock()}
+      ${EmptyBlock.formLoadContentBlock()}
     `;
-
-    return html;
   }
 
-  errorHtml() {
-    const html = `
+  static errorHtml() {
+    return `
       <div class="empty-header">
         <div class="emtpy-header__text">
           Произошла ошибка
         </div>  
-        ${this.inputWrapperHtml()}
+        ${EmptyBlock.inputWrapperHtml()}
       </div>
-      ${this.formLoadContentBlock()}
+      ${EmptyBlock.formLoadContentBlock()}
     `;
-
-    return html;
   }
 
   showError() {
-    emptyBlock.innerHTML = this.errorHtml();
+    emptyBlock.innerHTML = EmptyBlock.errorHtml();
 
     this.addButtonAction();
-    this.show();
+    EmptyBlock.show();
   }
 
   render() {
-    const html = this.error ? this.errorHtml() : this.defaultHtml();
-    emptyBlock.innerHTML = html;
+    emptyBlock.innerHTML = this.error ? EmptyBlock.errorHtml() : EmptyBlock.defaultHtml();
 
     this.addInputAction();
 
     this.addButtonAction();
 
     this.store.substribe(() => {
-      const showEmpty = this.store.getState().showEmpty;
-      const isLoading = this.store.getState().isLoading;
+      const { showEmpty } = this.store.getState();
+      const { isLoading } = this.store.getState();
       this.error = this.store.getState().error;
 
       if (isLoading || !showEmpty) {
-        this.hide();
+        EmptyBlock.hide();
         return;
       }
 
@@ -128,7 +124,7 @@ export default class EmptyBlock {
         return;
       }
 
-      this.show();
+      EmptyBlock.show();
     });
   }
 }

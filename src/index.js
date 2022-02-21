@@ -1,3 +1,4 @@
+/* eslint-disable no-new */
 import { fetchData } from 'api/fetchAPI';
 import { saveToLocalStorage, getFromLocalStorage } from 'utils/localStorage.js';
 import { LS_KEY } from 'utils/constants';
@@ -13,7 +14,7 @@ import './styles/style.css';
 
 const lsData = getFromLocalStorage(LS_KEY);
 
-const prevState = lsData ? lsData : initialState;
+const prevState = lsData || initialState;
 const store = createStore(reducer, prevState);
 
 const header = new Header();
@@ -21,35 +22,6 @@ const header = new Header();
 const saveData = async () => {
   const state = store.getState();
   saveToLocalStorage(LS_KEY, state);
-};
-
-const loadData = async () => {
-  store.dispatch(actions.changeEmpty(false));
-  store.dispatch(actions.loadData());
-
-  try {
-    const title = store.getState().title;
-    header.setTitle(title);
-
-    const res = await fetchData(title);
-
-    store.dispatch(actions.loadDataSuccess(res));
-
-    if (res?.data?.length === 0) {
-      clearTable();
-    }
-
-    saveData();
-  } catch (e) {
-    store.dispatch(actions.loadDataError(e));
-    store.dispatch(actions.changeEmpty(true));
-    console.log(e);
-  }
-};
-
-const updateData = async () => {
-  store.dispatch(actions.clearTable());
-  loadData();
 };
 
 const clearTable = () => {
@@ -60,13 +32,41 @@ const clearTable = () => {
   store.dispatch(actions.clearTable());
 };
 
-const renderPage = () => {
-  const data = store.getState().data;
+const loadData = async () => {
+  store.dispatch(actions.changeEmpty(false));
+  store.dispatch(actions.loadData());
+
+  try {
+    const { title } = store.getState();
+    header.setTitle(title);
+
+    const res = await fetchData(title);
+
+    store.dispatch(actions.loadDataSuccess(res));
+
+    if (res?.data?.length === 0) {
+      clearTable();
+    }
+
+    await saveData();
+  } catch (e) {
+    store.dispatch(actions.loadDataError(e));
+    store.dispatch(actions.changeEmpty(true));
+  }
+};
+
+const updateData = async () => {
+  store.dispatch(actions.clearTable());
+  await loadData();
+};
+
+const renderPage = async () => {
+  const { data } = store.getState();
   if (data?.length === 0) {
-    loadData();
+    await loadData();
   }
 
-  const title = store.getState().title;
+  const { title } = store.getState();
   header.setTitle(title);
 
   new Table({

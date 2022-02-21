@@ -6,18 +6,18 @@ export default class Spinner {
     this.render();
   }
 
-  hide() {
+  static hide() {
     spinnerWrapper.classList.add('hide');
   }
 
-  show() {
+  static show() {
     spinnerWrapper.classList.remove('hide');
   }
 
   render() {
     this.store.substribe(() => {
-      const isLoading = this.store.getState().isLoading;
-      const fn = isLoading ? this.show : this.hide;
+      const { isLoading } = this.store.getState();
+      const fn = isLoading ? Spinner.show : Spinner.hide;
       fn();
     });
   }

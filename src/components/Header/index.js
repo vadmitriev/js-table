@@ -17,11 +17,11 @@ export default class Header {
 
   render() {
     headerWrapper.innerHTML = `
-			<div class="header">
+      <div class="header">
         Top 100
         <span id="title">${this.title}</span> 
         Projects
-			</div>
-		`;
+      </div>
+  `;
   }
 }
